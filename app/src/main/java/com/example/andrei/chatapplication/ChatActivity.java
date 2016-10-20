@@ -5,9 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.widget.EditText;
 
 import com.example.andrei.chatapplication.helper.SingleFragmentActivity;
 import com.example.andrei.chatapplication.network.NetworkHelper;
@@ -19,10 +17,11 @@ public class ChatActivity extends SingleFragmentActivity
         implements ChatFragment.OnSendButtonClick, ChatFragment.OnRefreshButtonClick {
 
     public static final String EXTRA_MESSAGES = "eu.tb.afbencsi.messages";
+
     private final Handler mHandler = new Handler();
+
     private String mToken;
     private String mMessages;
-    private EditText mMessageSend;
     private Timer mTimer;
     private TimerTask mTimerTask;
 
@@ -33,7 +32,7 @@ public class ChatActivity extends SingleFragmentActivity
     private void startTimer() {
         // initialize timer
         mTimer = new Timer();
-        // initialize timer task TODO
+        // initialize timer task
         initializeTimerTask();
         // schedule
         mTimer.schedule(mTimerTask, 0, 10000);
@@ -77,24 +76,6 @@ public class ChatActivity extends SingleFragmentActivity
 
     }
 
-    private void updateFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-
-        Fragment nf = ChatFragment.newInstance();
-        Bundle args = new Bundle();
-
-        args.putString(LoginActivity.EXTRA_TOKEN, mToken);
-        args.putString(EXTRA_MESSAGES, mMessages);
-
-        nf.setArguments(args);
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .remove(fm.findFragmentById(R.id.fragment_container))
-                .add(R.id.fragment_container, nf)
-                .commit();
-    }
-
     @Override
     public Fragment createFragment() {
 
@@ -105,7 +86,7 @@ public class ChatActivity extends SingleFragmentActivity
 
         Bundle args = new Bundle();
 
-        updateMessages();
+        //updateMessages();
 
         args.putString(LoginActivity.EXTRA_TOKEN, mToken);
         args.putString(EXTRA_MESSAGES, mMessages);

@@ -1,6 +1,7 @@
 package com.example.andrei.chatapplication;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.andrei.chatapplication.helper.MessagesAdapter;
 import com.example.andrei.chatapplication.message.Message;
+import com.example.andrei.chatapplication.network.NetworkHelper;
 import com.example.andrei.chatapplication.parser.JsonParser;
 
 import java.util.ArrayList;
@@ -27,9 +29,9 @@ import java.util.List;
  */
 
 public class ChatFragment extends Fragment {
+    String mToken;
     private String mStringMessages;
     private List<Message> mMsgList = new ArrayList<>();
-
     private EditText mEditMyMessage;
     private TextView mTextViewMessages;
 
@@ -54,9 +56,9 @@ public class ChatFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mStringMessages = getArguments().getString(ChatActivity.EXTRA_MESSAGES);
-
-        getMessageList();
+        Bundle args = getArguments();
+        mToken = args.getString(LoginActivity.EXTRA_TOKEN);
+        mStringMessages = updateMessages(mToken);
 
     }
 
@@ -70,12 +72,9 @@ public class ChatFragment extends Fragment {
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mOnRefreshButtonHandler.onRefreshButtonClick();
-                getMessageList();
-                mRecyclerView.swapAdapter(mMessagesAdapter, true);
-                Log.d("Andrei: onRefreshSwipe", "onRefresh: " + mMsgList.size());
-                mRecyclerView.scrollToPosition(mMsgList.size() - 1);
-                mSwipeContainer.setRefreshing(false);
+
+                mStringMessages = updateMessages(mToken);
+
             }
         });
 
@@ -93,8 +92,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
                 mStringMessages = mOnSendButtonHandler.onSendButtonClick(mEditMyMessage.getText().toString());
                 mEditMyMessage.setText("");
-                //getMessageList();
-                mRecyclerView.swapAdapter(mMessagesAdapter, true);
+                mStringMessages = updateMessages(mToken);
             }
         });
         /* setup the recycler */
@@ -102,14 +100,13 @@ public class ChatFragment extends Fragment {
         /* set layout */
         mLinearLayoutManager = new LinearLayoutManager(getContext());
 
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
         /* set adapter */
         mMessagesAdapter = new MessagesAdapter(mMsgList);
+
         mRecyclerView.setAdapter(mMessagesAdapter);
 
-        mLinearLayoutManager.scrollToPosition(mMsgList.size());
+        mRecyclerView.setLayoutManager(mLinearLayoutManager);
 
-        mMessagesAdapter.notifyDataSetChanged();
         return v;
     }
 
@@ -127,18 +124,30 @@ public class ChatFragment extends Fragment {
     }
 
     private void getMessageList() {
-        Log.d("Andrei: getMessageList", "getMessageList: " + mStringMessages);
+        Log.d("Andrei: getMessageList", "getMessageList: Called " + mStringMessages);
         try {
 
             mMsgList.clear();
             mMsgList.addAll(JsonParser.getMessages(mStringMessages));
-            mMessagesAdapter.swap(mMsgList);
+            /*mMessagesAdapter.swap(mMsgList);
+            mRecyclerView.swapAdapter(mMessagesAdapter, true);*/
 
         } catch (Exception ex) {
             Log.e("Andrei: getMessageList", "getMessageList: parsing went wrong ..");
         }
     }
 
+    private String updateMessages(String token) {
+
+        try {
+            mStringMessages = new AsyncTaskMessages(getActivity()).execute(token).get();
+            Log.d("Andrei:UpdateMessage", "UpdateMessage:" + mStringMessages);
+        } catch (Exception ex) {
+            Log.e("Andrei:UpdateMessage", "UpdateMessage: error fetching the messages..");
+        }
+        return mStringMessages;
+
+    }
 
     public interface OnSendButtonClick {
         String onSendButtonClick(String... params);
@@ -146,5 +155,41 @@ public class ChatFragment extends Fragment {
 
     public interface OnRefreshButtonClick {
         String onRefreshButtonClick();
+    }
+
+    private class AsyncTaskMessages extends AsyncTask<String, Void, String> {
+
+        Context context;
+
+        public AsyncTaskMessages(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            if (!NetworkHelper.isInternetAvailable(context)) {
+                return "Internet is not available!";
+            }
+
+            return NetworkHelper.getMessages(params[0]);
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            getMessageList();
+
+
+            mLinearLayoutManager.scrollToPosition(mMsgList.size() - 1);
+
+            mMessagesAdapter.notifyDataSetChanged();
+
+            if (mSwipeContainer.isRefreshing()) {
+                mSwipeContainer.setRefreshing(false);
+            }
+        }
+
     }
 }
