@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Chat Application</string>
+    <string name="login_text">Login</string>
+    <string name="login_edit">Enter yout username..</string>
+    <string name="passwd_text">Password</string>
+    <string name="passwd_edit">Please enter your password</string>
+    <string name="passwd_text_description">The password indicator</string>
+    <string name="button_login">Login!</string>
+    <string name="new_account_text">New account</string>
+    <string name="passwd_edit_again">Enter password again..</string>
+    <string name="name_edit">Enter your name</string>
+    <string name="name_text">Your name</string>
+    <string name="button_create">Create</string>
+    <string name="write_a_message">Write a message...</string>
+    <string name="SIGNUPURL">http://cesi.cleverapps.io/signup</string>
+    <string name="SIGNINURL">http://cesi.cleverapps.io/ping</string>
+    <string name="GETMESSAGESURL">http://cesi.cleverapps.io/messages</string>
+    <string name="SENDMESSAGESURL">http://cesi.cleverapps.io/messages</string>
+
+</resources>
