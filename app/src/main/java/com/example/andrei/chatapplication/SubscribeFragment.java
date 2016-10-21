@@ -4,11 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -62,6 +65,25 @@ public class SubscribeFragment extends Fragment {
         // password verification
         mEditTextPasswdAgain = (EditText) v.findViewById((R.id.subscribe_edit_text_passwd_again));
 
+        mEditTextPasswdAgain.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                boolean handled = false;
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    String login = mEditTextLogin.getText().toString();
+
+                    String passwd = mEditTextPasswd.getText().toString();
+
+                    String passwdAgain = mEditTextPasswdAgain.getText().toString();
+
+                    String urlPhoto = "";
+
+                    subscribe(login, passwd, passwdAgain);
+                }
+                return false;
+            }
+        });
+
         // the button
         mNewAccButton = (Button) v.findViewById(R.id.subscribe_button_create);
 
@@ -76,12 +98,8 @@ public class SubscribeFragment extends Fragment {
 
                 String urlPhoto = "";
 
-                if (passwd.equals(passwdAgain)) {
-                    mOnCreateAccHandler.onCreateAccClick(login, passwd, urlPhoto);
-                    getActivity().finish();
-                } else
-                    Toast.makeText(getContext(), "The passwords do not match !", Toast.LENGTH_SHORT)
-                            .show();
+                subscribe(login, passwd, passwdAgain);
+
             }
         });
         return v;
@@ -101,6 +119,14 @@ public class SubscribeFragment extends Fragment {
         }
     }
 
+    private void subscribe(String uname, String pass, String passAgain) {
+        if (pass.equals(passAgain)) {
+            mOnCreateAccHandler.onCreateAccClick(uname, pass, passAgain);
+            getActivity().finish();
+        } else
+            Toast.makeText(getContext(), "The passwords do not match !", Toast.LENGTH_SHORT)
+                    .show();
+    }
     public interface OnCreateAccListener {
         void onCreateAccClick(String... params);
     }

@@ -4,11 +4,16 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 /**
  * @author Andrei
@@ -48,10 +53,66 @@ public class LoginFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_login, container, false);
 
         mLoginEdit = (EditText) v.findViewById(R.id.subscribe_edit_text_login_uname);
-
         mPasswdEdit = (EditText) v.findViewById(R.id.subscribe_edit_text_passwd_again);
-
         mLoginButton = (Button) v.findViewById(R.id.subscribe_button_create);
+        /* enable the button when sufficient input is given */
+        mLoginEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (mLoginEdit.getText().length() < 1 || mPasswdEdit.getText().toString().length() < 0) {
+                    mLoginButton.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().length() > 0 && mPasswdEdit.getText().toString().length() > 0) {
+                    mLoginButton.setEnabled(true);
+                }
+            }
+        });
+        /* same for passwd */
+        mPasswdEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (mLoginEdit.getText().length() < 1 || mPasswdEdit.getText().toString().length() < 1) {
+                    mLoginButton.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().length() > 0 && mLoginEdit.getText().toString().length() > 0) {
+                    mLoginButton.setEnabled(true);
+                }
+            }
+        });
+        mPasswdEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                boolean handled = false;
+                if (i == EditorInfo.IME_ACTION_DONE) {
+                    String uname = mLoginEdit.getText().toString();
+
+                    String passwd = mPasswdEdit.getText().toString();
+
+                    login(uname, passwd);
+
+                    handled = true;
+                }
+                return handled;
+            }
+        });
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +122,7 @@ public class LoginFragment extends Fragment {
 
                 String passwd = mPasswdEdit.getText().toString();
 
-                mLoginHandler.onLoginClick(uname, passwd);
+                login(uname, passwd);
             }
         });
 
@@ -87,9 +148,12 @@ public class LoginFragment extends Fragment {
                     + " must implement OnLoginClickListener and OnNewAccClickListener");
         }
 
-
     }
 
+    private void login(String uname, String passwd) {
+
+        mLoginHandler.onLoginClick(uname, passwd);
+    }
     public interface OnLoginClickListener {
         void onLoginClick(String... params);
     }

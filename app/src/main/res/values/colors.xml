@@ -3,7 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="year">#999999</color>
+    <color name="year">#272a30</color>
     <color name="title">#222222</color>
     <color name="white">#FFFFFF</color>
+    <color name="send">#91ba95</color>
+    <color name="receive">#99c5c6</color>
 </resources>

@@ -7,8 +7,8 @@
                 android:orientation="vertical">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
 
         android:layout_above="@+id/subscribe_layout_login_infos"
 
@@ -83,6 +83,9 @@
                 android:layout_height="wrap_content"
 
                 android:hint="@string/passwd_edit_again"
+
+                android:imeOptions="actionDone"
+
                 android:inputType="textPassword"/>
         </android.support.design.widget.TextInputLayout>
 
@@ -93,8 +96,10 @@
 
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:background="@color/colorPrimaryDark"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
 
+
+            android:background="@color/colorPrimaryDark"
             android:enabled="false"
             android:text="@string/button_create"
             android:textColor="@color/white"/>

@@ -6,7 +6,7 @@ package com.example.andrei.chatapplication.account;
  */
 public class AccountLab {
 
-    private static AccountLab sAccoutLab;
+    private static AccountLab sAccountLab;
     private Account mAccount;
 
     private AccountLab() {
@@ -14,14 +14,14 @@ public class AccountLab {
     }
 
     public static AccountLab getInstance() {
-        if (sAccoutLab == null) {
-            sAccoutLab = new AccountLab();
+        if (sAccountLab == null) {
+            sAccountLab = new AccountLab();
         }
-        return sAccoutLab;
+        return sAccountLab;
     }
 
-    public Account createAccount(String login, String name, String passwd) {
-        mAccount = new Account(login, name, passwd);
+    public Account createAccount(String login, String passwd) {
+        mAccount = new Account(login, passwd);
         return this.getAccount();
     }
 

@@ -17,7 +17,7 @@ import java.util.TimerTask;
  * @author Andrei
  *         Make the class for the actual chat
  *         <p>
- *         Uses a RecyclerView for showing messages (for now using the same ViewHolder for all messages)
+ *         Uses a RecyclerView for showing messages (for now using the same ViewHolderReceive for all messages)
  *         <p>
  *         Uses a Fragment to displa the whole chat
  */

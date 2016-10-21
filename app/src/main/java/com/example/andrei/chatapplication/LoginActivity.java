@@ -6,7 +6,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.andrei.chatapplication.account.AccountLab;
 import com.example.andrei.chatapplication.helper.DisplayProgress;
 import com.example.andrei.chatapplication.helper.SingleFragmentActivity;
 import com.example.andrei.chatapplication.network.NetworkHelper;
@@ -55,6 +57,8 @@ public class LoginActivity extends SingleFragmentActivity
             //mDisplayProgress.hideProgressDialog();
             mToken = JsonParser.getToken(mToken);
 
+            AccountLab.getInstance().createAccount(params[0], params[1]);
+
             Log.i("Andrei", "onLoginClick: " + mToken);
 
             Intent i = new Intent(this, ChatActivity.class);
@@ -65,6 +69,7 @@ public class LoginActivity extends SingleFragmentActivity
 
         } catch (Exception iex) {
             Log.w("Andrei", "Could not run the task !");
+            Toast.makeText(this, "Could not sign in!", Toast.LENGTH_SHORT).show();
             iex.printStackTrace();
         }
     }
