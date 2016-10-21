@@ -1,5 +1,9 @@
 package com.example.andrei.chatapplication.account;
 
+/**
+ * @author Andrei
+ *         TODO Account lab for later use
+ */
 public class AccountLab {
 
     private static AccountLab sAccoutLab;

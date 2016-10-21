@@ -13,19 +13,68 @@ import com.example.andrei.chatapplication.network.NetworkHelper;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * @author Andrei
+ *         Make the class for the actual chat
+ *         <p>
+ *         Uses a RecyclerView for showing messages (for now using the same ViewHolder for all messages)
+ *         <p>
+ *         Uses a Fragment to displa the whole chat
+ */
 public class ChatActivity extends SingleFragmentActivity
         implements ChatFragment.OnSendButtonClick, ChatFragment.OnRefreshButtonClick {
 
     public static final String EXTRA_MESSAGES = "eu.tb.afbencsi.messages";
 
     private final Handler mHandler = new Handler();
-
+    /* token received from the Login Activity */
     private String mToken;
+    /* messages received as a HTTP response */
     private String mMessages;
+    /* a timer for refresh -> TODO */
     private Timer mTimer;
     private TimerTask mTimerTask;
 
     // private DisplayProgress mDisplayProgress = new DisplayProgress(this);
+
+    /**
+     * The method used to create the fragment and pass it necessary args
+     */
+    @Override
+    public Fragment createFragment() {
+
+        mToken = getIntent().getStringExtra(LoginActivity.EXTRA_TOKEN);
+        mMessages = getIntent().getStringExtra(LoginActivity.EXTRA_MESSAGES);
+
+        ChatFragment cf = (ChatFragment) ChatFragment.newInstance();
+
+        Bundle args = new Bundle();
+
+        //updateMessages();
+
+        args.putString(LoginActivity.EXTRA_TOKEN, mToken);
+        args.putString(EXTRA_MESSAGES, mMessages);
+
+        cf.setArguments(args);
+
+        return cf;
+    }
+
+    /**
+     * AsyncTask wrapper to update the messages
+     *
+     * @deprecated This functionality was moved to the fragment!! Still needs some refactoring
+     */
+    private void updateMessages() {
+
+        try {
+            mMessages = new AsyncTaskMessages(this).execute(mToken).get();
+            Log.d("Andrei:UpdateMessage", "UpdateMessage:" + mMessages);
+        } catch (Exception ex) {
+            Log.e("Andrei:UpdateMessage", "UpdateMessage: error fetching the messages..");
+        }
+
+    }
     /*
         start the timer and make it reload every 10 seconds
      */
@@ -65,37 +114,6 @@ public class ChatActivity extends SingleFragmentActivity
         };
     }
 
-    private void updateMessages() {
-
-        try {
-            mMessages = new AsyncTaskMessages(this).execute(mToken).get();
-            Log.d("Andrei:UpdateMessage", "UpdateMessage:" + mMessages);
-        } catch (Exception ex) {
-            Log.e("Andrei:UpdateMessage", "UpdateMessage: error fetching the messages..");
-        }
-
-    }
-
-    @Override
-    public Fragment createFragment() {
-
-        mToken = getIntent().getStringExtra(LoginActivity.EXTRA_TOKEN);
-        mMessages = getIntent().getStringExtra(LoginActivity.EXTRA_MESSAGES);
-
-        ChatFragment cf = (ChatFragment) ChatFragment.newInstance();
-
-        Bundle args = new Bundle();
-
-        //updateMessages();
-
-        args.putString(LoginActivity.EXTRA_TOKEN, mToken);
-        args.putString(EXTRA_MESSAGES, mMessages);
-
-        cf.setArguments(args);
-
-        return cf;
-    }
-
     @Override
     public String onSendButtonClick(String... params) {
 
@@ -113,6 +131,9 @@ public class ChatActivity extends SingleFragmentActivity
         return mMessages;
     }
 
+    /**
+     * @deprecated MOVED TO FRAGMENT
+     */
     private class AsyncTaskMessages extends AsyncTask<String, Void, String> {
 
         Context context;
@@ -138,6 +159,10 @@ public class ChatActivity extends SingleFragmentActivity
 
     }
 
+    /**
+     * Used to send the messages !
+     * Called in the callback
+     */
     private class AsyncTaskSend extends AsyncTask<String, Void, String> {
 
         Context context;

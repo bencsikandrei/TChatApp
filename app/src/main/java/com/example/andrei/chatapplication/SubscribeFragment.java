@@ -12,7 +12,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 /**
- * Created by andrei on 19.10.2016.
+ * @author Andrei
+ *
+ * Fragment for the VIEW of Subscribe Activity
+ *
+ * Has an AsyncTask for updating messages
+ *
+ * Uses one callback to create a user
+ *
+ *
  */
 
 public class SubscribeFragment extends Fragment {
@@ -46,16 +54,16 @@ public class SubscribeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_subscribe, container, false);
 
         // the edit text for the login
-        mEditTextLogin = (EditText) v.findViewById(R.id.edit_text_login);
+        mEditTextLogin = (EditText) v.findViewById(R.id.subscribe_edit_text_login_uname);
 
         // the edit text for the login
-        mEditTextPasswd = (EditText) v.findViewById(R.id.edit_text_passwd);
+        mEditTextPasswd = (EditText) v.findViewById(R.id.subscribe_edit_text_passwd);
 
         // password verification
-        mEditTextPasswdAgain = (EditText) v.findViewById((R.id.edit_text_passwd_again));
+        mEditTextPasswdAgain = (EditText) v.findViewById((R.id.subscribe_edit_text_passwd_again));
 
         // the button
-        mNewAccButton = (Button) v.findViewById(R.id.button_create);
+        mNewAccButton = (Button) v.findViewById(R.id.subscribe_button_create);
 
         mNewAccButton.setOnClickListener(new View.OnClickListener() {
             @Override

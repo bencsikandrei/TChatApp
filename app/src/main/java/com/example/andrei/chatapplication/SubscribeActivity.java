@@ -9,10 +9,19 @@ import com.example.andrei.chatapplication.helper.DisplayProgress;
 import com.example.andrei.chatapplication.helper.SingleFragmentActivity;
 import com.example.andrei.chatapplication.network.NetworkHelper;
 
-/**
- * Created by andrei on 19.10.2016.
- */
 
+/**
+ * @author Andrei
+ * Make the class for the Subscribe
+ *
+ * Uses an AsyncTask to do the POST for subscribe
+ *
+ * Uses a Fragment to display the whole view
+ *
+ *
+ *
+ *
+ */
 public class SubscribeActivity extends SingleFragmentActivity
         implements SubscribeFragment.OnCreateAccListener {
 

@@ -20,7 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by sca on 29/05/15.
+ * @author Andrei
+ * Simple Network functions like GET and POST
+ * TODO move the public static strings to the resources dir
  */
 public class NetworkHelper {
 
@@ -93,7 +95,7 @@ public class NetworkHelper {
 
     public static String POST(String urlString, HashMap<String, String> params, String token) {
 
-        // Un stream pour récevoir la réponse
+        // get a stream to receive HTTP response
         InputStream inputStream = null;
 
         try {
@@ -154,7 +156,7 @@ public class NetworkHelper {
     }
 
     private static String GET(String urlString, String token) {
-        // Un stream pour récevoir la réponse
+        // stream to receive the HTTP response
         InputStream inputStream = null;
 
         try {
@@ -181,10 +183,10 @@ public class NetworkHelper {
 
             if (response != HttpURLConnection.HTTP_OK) {
 
-                Log.d("Andrei", "GET: connection HTTP answer failed: " + response);
+                Log.d("Andrei:NetworkHelper", "GET: connection HTTP answer failed: " + response);
 
             } else {
-                Log.d("NetworkHelper", "The response code is: " + response);
+                Log.d("Andrei:NetworkHelper", "The response code is: " + response);
 
                 inputStream = conn.getInputStream();
 
@@ -218,6 +220,7 @@ public class NetworkHelper {
      * @return
      */
     private static String concatParams(Map<String, String> params) {
+        /* use a string builder because of varied size */
         StringBuilder sb = new StringBuilder();
 
         if (params != null && params.size() > 0) {
@@ -225,7 +228,7 @@ public class NetworkHelper {
                 try {
                     sb.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), "UTF-8")).append("&");
                 } catch (UnsupportedEncodingException e) {
-                    Log.e("Andrei", "Error adding param", e);
+                    Log.e("Andrei: concatParams", "Error adding param", e);
                 }
             }
         }
@@ -236,11 +239,13 @@ public class NetworkHelper {
     private static String readIt(InputStream stream) throws IOException {
         int ch;
         StringBuffer sb = new StringBuffer();
+
         while ((ch = stream.read()) != -1) {
             sb.append((char) ch);
         }
 
         Reader reader = null;
+
         reader = new InputStreamReader(stream, "UTF-8");
 
         while ((ch = reader.read()) != -1) {

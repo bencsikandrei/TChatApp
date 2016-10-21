@@ -8,7 +8,8 @@ import android.support.v4.app.FragmentManager;
 import com.example.andrei.chatapplication.R;
 
 /**
- * Created by andrei on 18.10.2016.
+ * @author Andrei
+ * Helper class for all activities, since we want to use fragments
  */
 public abstract class SingleFragmentActivity extends FragmentActivity {
     // the method to use when creating a fragment

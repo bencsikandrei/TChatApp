@@ -5,10 +5,11 @@ import android.content.Context;
 import android.util.Log;
 
 /**
- * Created by andrei on 19.10.2016.
+ * Progress dialog class, to have a centralized way of showing
+ * or hiding a PD
  */
-
 public class DisplayProgress {
+
     Context mContext;
     ProgressDialog progressDialog;
 
@@ -19,11 +20,11 @@ public class DisplayProgress {
     /**
      * display a Progress Dialog.
      */
-    public void displayProgressDialog() {
+    public void displayProgressDialog(String task) {
         progressDialog = new ProgressDialog(mContext);
 
         progressDialog.setTitle("Loading ...");
-        progressDialog.setMessage("Login in progress ...");
+        progressDialog.setMessage(task + " in progress ...");
         progressDialog.show();
     }
 
@@ -34,7 +35,7 @@ public class DisplayProgress {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         } else {
-            Log.w("HelloWorld", "trying to close Progress dialog that is not exist or opened");
+            Log.w("Andrei", "trying to close Progress dialog that is not exist or opened");
         }
     }
 

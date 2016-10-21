@@ -13,9 +13,17 @@ import com.example.andrei.chatapplication.network.NetworkHelper;
 import com.example.andrei.chatapplication.parser.JsonParser;
 
 /**
- * Created by andrei on 18.10.2016.
+ * @author Andrei
+ * Make the class for the Login
+ *
+ * Uses an AsyncTask to do the POST for login
+ *
+ * Uses a Fragment to displa the whole view
+ *
+ *
+ *
+ *
  */
-
 public class LoginActivity extends SingleFragmentActivity
         implements LoginFragment.OnLoginClickListener, LoginFragment.OnNewAccClickListener {
 

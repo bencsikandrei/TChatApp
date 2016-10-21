@@ -12,7 +12,8 @@ import com.example.andrei.chatapplication.message.Message;
 import java.util.List;
 
 /**
- * Created by andrei on 19.10.2016.
+ * @author Andrei
+ * Message adapter for the RecyclerView - used on messages in the chat
  */
 
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder> {
@@ -22,6 +23,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         mMessageList = msgList;
     }
 
+    /* change the adapter - whe refreshing */
     public void swap(List<Message> msgList) {
         msgList.clear();
 
@@ -32,6 +34,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
     @Override
     public MessagesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.message_list_row, parent, false);
 
@@ -54,7 +57,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView from, message, date;
+        /* the text views for the messages */
+        public TextView from;
+        public TextView message;
+        public TextView date;
 
         public ViewHolder(View view) {
             super(view);
@@ -63,4 +69,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             date = (TextView) view.findViewById(R.id.text_view_date_message);
         }
     }
+
+    /* TODO add a second viewholder class for the messages that are sent by me */
+
 }

@@ -25,7 +25,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by andrei on 18.10.2016.
+ * @author Andrei
+ *
+ * Fragment for the VIEW of Chat Activity
+ *
+ * Has an AsyncTask for updating messages
+ *
+ * Uses one callback to send a message
+ *
+ *
  */
 
 public class ChatFragment extends Fragment {
@@ -66,7 +74,7 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chat, container, false);
-
+        /* swipe refresh */
         mSwipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
 
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -116,13 +124,16 @@ public class ChatFragment extends Fragment {
         try {
 
             mOnSendButtonHandler = (OnSendButtonClick) context;
-            mOnRefreshButtonHandler = (OnRefreshButtonClick) context;
+            //mOnRefreshButtonHandler = (OnRefreshButtonClick) context;
 
         } catch (ClassCastException cex) {
             Log.e("Andrei", "onAttach: Class must implement the required interfaces ..");
         }
     }
 
+    /**
+     * refresh message list !
+     */
     private void getMessageList() {
         Log.d("Andrei: getMessageList", "getMessageList: Called " + mStringMessages);
         try {
@@ -137,6 +148,7 @@ public class ChatFragment extends Fragment {
         }
     }
 
+    /* call the AsyncTask to fetch messages from server */
     private String updateMessages(String token) {
 
         try {
@@ -149,14 +161,21 @@ public class ChatFragment extends Fragment {
 
     }
 
+    /* necessary callbacks */
     public interface OnSendButtonClick {
         String onSendButtonClick(String... params);
     }
 
+    /**
+     * @deprecated No longer used
+     */
     public interface OnRefreshButtonClick {
         String onRefreshButtonClick();
     }
 
+    /**
+     * replaces the callback
+     */
     private class AsyncTaskMessages extends AsyncTask<String, Void, String> {
 
         Context context;
@@ -175,12 +194,12 @@ public class ChatFragment extends Fragment {
 
         }
 
+        /* update the views */
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
             getMessageList();
-
 
             mLinearLayoutManager.scrollToPosition(mMsgList.size() - 1);
 

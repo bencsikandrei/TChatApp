@@ -3,7 +3,10 @@ package com.example.andrei.chatapplication.message;
 import java.text.DateFormat;
 import java.util.Date;
 
-
+/**
+ * @author Andrei
+ *         Simple POJO for messages
+ */
 public class Message {
     /* message POJO */
     private String mUserName;

@@ -1,5 +1,9 @@
 package com.example.andrei.chatapplication.account;
 
+/**
+ * @author Andrei
+ *         Simple POJO for messages
+ */
 /* account POJO */
 public class Account {
     String mLogin;

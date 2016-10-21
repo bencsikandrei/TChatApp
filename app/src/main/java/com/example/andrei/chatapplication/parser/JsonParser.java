@@ -10,7 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by sca on 03/06/15.
+ * @author Andrei
+ * Simple JSON parser
+ * TODO make it more general - so it is able to take a MAP maybe and then not have specific methods
  */
 public class JsonParser {
 

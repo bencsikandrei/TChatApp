@@ -11,9 +11,16 @@ import android.widget.Button;
 import android.widget.EditText;
 
 /**
- * Created by andrei on 18.10.2016.
+ * @author Andrei
+ *
+ * Fragment for the VIEW of Chat Activity
+ *
+ * Has an AsyncTask for updating messages
+ *
+ * Uses one callback to send a message
+ *
+ *
  */
-
 public class LoginFragment extends Fragment {
 
     private OnLoginClickListener mLoginHandler;
@@ -40,11 +47,11 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_login, container, false);
 
-        mLoginEdit = (EditText) v.findViewById(R.id.edit_text_login_uname);
+        mLoginEdit = (EditText) v.findViewById(R.id.subscribe_edit_text_login_uname);
 
-        mPasswdEdit = (EditText) v.findViewById(R.id.edit_text_login_passwd);
+        mPasswdEdit = (EditText) v.findViewById(R.id.subscribe_edit_text_passwd_again);
 
-        mLoginButton = (Button) v.findViewById(R.id.button_login);
+        mLoginButton = (Button) v.findViewById(R.id.subscribe_button_create);
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
