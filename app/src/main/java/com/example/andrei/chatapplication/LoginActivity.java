@@ -1,6 +1,6 @@
 package com.example.andrei.chatapplication;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -56,16 +56,11 @@ public class LoginActivity extends SingleFragmentActivity
         // take the data and make the call
         //mDisplayProgress.displayProgressDialog();
 
-        mAsyncTaskLogin = new AsyncTaskLogin(this);
+        mAsyncTaskLogin = new AsyncTaskLogin(LoginActivity.this, params);
 
         try {
-            HttpResponse http = mAsyncTaskLogin.execute(params).get();
-            if (http != null && http.code == HttpURLConnection.HTTP_OK) {
-                //mDisplayProgress.hideProgressDialog();
-                AccountLab.getInstance().createAccount(params[0], params[1]);
-            } else {
-                Toast.makeText(this, "Please check credentials and try again!", Toast.LENGTH_SHORT).show();
-            }
+            mAsyncTaskLogin.execute(params);
+
 
         } catch (Exception ex) {
 
@@ -85,19 +80,24 @@ public class LoginActivity extends SingleFragmentActivity
 
     private class AsyncTaskLogin extends AsyncTask<String, Void, HttpResponse> {
 
-        Context context;
+        Activity context;
+        String uname, passwd;
 
-        public AsyncTaskLogin(Context context) {
+        public AsyncTaskLogin(Activity context, String... params) {
             this.context = context;
+            this.uname = params[0];
+            this.passwd = params[1];
         }
 
         @Override
         protected HttpResponse doInBackground(String... params) {
+
             if (!NetworkHelper.isInternetAvailable(context)) {
                 return new HttpResponse(404, "");
             }
+            HttpResponse http;
+            http = NetworkHelper.signin(params[0], params[1]);
 
-            HttpResponse http = NetworkHelper.signin(params[0], params[1]);
             if (http != null && http.code == HttpURLConnection.HTTP_OK) {
 
                 try {
@@ -106,11 +106,9 @@ public class LoginActivity extends SingleFragmentActivity
 
                     Log.i("Andrei", "onLoginClick: " + mToken);
 
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
 
                 Log.i("Andrei", "Do in background ->  " + http.json);
             }
@@ -122,7 +120,12 @@ public class LoginActivity extends SingleFragmentActivity
         protected void onPostExecute(final HttpResponse resp) {
             super.onPostExecute(resp);
 
-
+            if (resp != null && resp.code == HttpURLConnection.HTTP_OK) {
+                //mDisplayProgress.hideProgressDialog();
+                AccountLab.getInstance().createAccount(uname, passwd);
+            } else {
+                Toast.makeText(LoginActivity.this, "Please check credentials and try again!", Toast.LENGTH_SHORT).show();
+            }
             if (resp != null && resp.code == HttpURLConnection.HTTP_OK) {
                 Intent i = new Intent(LoginActivity.this, ChatActivity.class);
 
