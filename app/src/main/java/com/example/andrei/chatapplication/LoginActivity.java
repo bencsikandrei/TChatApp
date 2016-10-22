@@ -11,8 +11,13 @@ import android.widget.Toast;
 import com.example.andrei.chatapplication.account.AccountLab;
 import com.example.andrei.chatapplication.helper.DisplayProgress;
 import com.example.andrei.chatapplication.helper.SingleFragmentActivity;
+import com.example.andrei.chatapplication.network.HttpResponse;
 import com.example.andrei.chatapplication.network.NetworkHelper;
 import com.example.andrei.chatapplication.parser.JsonParser;
+
+import org.json.JSONException;
+
+import java.net.HttpURLConnection;
 
 /**
  * @author Andrei
@@ -50,28 +55,25 @@ public class LoginActivity extends SingleFragmentActivity
     public void onLoginClick(String... params) {
         // take the data and make the call
         //mDisplayProgress.displayProgressDialog();
+
         mAsyncTaskLogin = new AsyncTaskLogin(this);
+
         try {
+            HttpResponse http = mAsyncTaskLogin.execute(params).get();
+            if (http != null && http.code == HttpURLConnection.HTTP_OK) {
+                //mDisplayProgress.hideProgressDialog();
+                AccountLab.getInstance().createAccount(params[0], params[1]);
+            } else {
+                Toast.makeText(this, "Please check credentials and try again!", Toast.LENGTH_SHORT).show();
+            }
 
-            mToken = mAsyncTaskLogin.execute(params).get();
-            //mDisplayProgress.hideProgressDialog();
-            mToken = JsonParser.getToken(mToken);
+        } catch (Exception ex) {
 
-            AccountLab.getInstance().createAccount(params[0], params[1]);
-
-            Log.i("Andrei", "onLoginClick: " + mToken);
-
-            Intent i = new Intent(this, ChatActivity.class);
-
-            i.putExtra(EXTRA_TOKEN, mToken);
-
-            startActivity(i);
-
-        } catch (Exception iex) {
-            Log.w("Andrei", "Could not run the task !");
-            Toast.makeText(this, "Could not sign in!", Toast.LENGTH_SHORT).show();
-            iex.printStackTrace();
+            Toast.makeText(this, "Task was interrupted!", Toast.LENGTH_SHORT).show();
         }
+
+
+
     }
 
     @Override
@@ -81,7 +83,7 @@ public class LoginActivity extends SingleFragmentActivity
         startActivity(i);
     }
 
-    private class AsyncTaskLogin extends AsyncTask<String, Void, String> {
+    private class AsyncTaskLogin extends AsyncTask<String, Void, HttpResponse> {
 
         Context context;
 
@@ -90,17 +92,44 @@ public class LoginActivity extends SingleFragmentActivity
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected HttpResponse doInBackground(String... params) {
             if (!NetworkHelper.isInternetAvailable(context)) {
-                return "Internet is not available!";
+                return new HttpResponse(404, "");
             }
 
-            return NetworkHelper.signin(params[0], params[1]);
+            HttpResponse http = NetworkHelper.signin(params[0], params[1]);
+            if (http != null && http.code == HttpURLConnection.HTTP_OK) {
+
+                try {
+
+                    mToken = JsonParser.getToken(http.json);
+
+                    Log.i("Andrei", "onLoginClick: " + mToken);
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                Log.i("Andrei", "Do in background ->  " + http.json);
+            }
+            return http;
+
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(final HttpResponse resp) {
+            super.onPostExecute(resp);
+
+
+            if (resp != null && resp.code == HttpURLConnection.HTTP_OK) {
+                Intent i = new Intent(LoginActivity.this, ChatActivity.class);
+
+                i.putExtra(EXTRA_TOKEN, mToken);
+
+                startActivity(i);
+            }
 
         }
 

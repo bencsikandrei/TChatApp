@@ -48,7 +48,7 @@ public class NetworkHelper {
         return true;
     }
 
-    public static String sendMessage(String message, String token) {
+    public static HttpResponse sendMessage(String message, String token) {
         Log.d("Andrei", "sendMessage: now sending this message " + message + " with the token " + token);
         HashMap<String, String> params = new HashMap<>();
         params.put("message", message);
@@ -56,13 +56,15 @@ public class NetworkHelper {
 
     }
 
-    public static String getMessages(String token) {
+    public static HttpResponse getMessages(String token) {
+
+        Log.d("Andrei", "NetworkHelper: getMessages: " + token);
 
         return GET(RECEIVE_MESSAGES_URL, token);
 
     }
 
-    public static String signup(String username, String pwd, String urlPhoto) {
+    public static HttpResponse signup(String username, String pwd, String urlPhoto) {
         HashMap<String, String> params = new HashMap<>();
         params.put("username", username);
         params.put("pwd", pwd);
@@ -71,7 +73,7 @@ public class NetworkHelper {
         return POST(SIGNUP_SERVICE_URL, params, null);
     }
 
-    public static String signin(String username, String pwd) {
+    public static HttpResponse signin(String username, String pwd) {
         HashMap<String, String> params = new HashMap<>();
         /* do the post */
         params.put("username", username);
@@ -80,20 +82,20 @@ public class NetworkHelper {
 
     }
 
-    public static String hello(String name) {
+    public static HttpResponse hello(String name) {
 
         return GET(HELLO_SERVICE_URL + "?name=" + name, null);
 
     }
 
-    public static String ping() {
+    public static HttpResponse ping() {
 
         return POST(PING_SERVICE_URL, null, null);
 
 
     }
 
-    public static String POST(String urlString, HashMap<String, String> params, String token) {
+    public static HttpResponse POST(String urlString, HashMap<String, String> params, String token) {
 
         // get a stream to receive HTTP response
         InputStream inputStream = null;
@@ -137,7 +139,7 @@ public class NetworkHelper {
             // Convert the InputStream into a string
             String contentAsString = NetworkHelper.readIt(inputStream);
 
-            return contentAsString;
+            return new HttpResponse(response, contentAsString);
 
             // Makes sure that the InputStream is closed after the app is
             // finished using it.
@@ -155,7 +157,7 @@ public class NetworkHelper {
         }
     }
 
-    private static String GET(String urlString, String token) {
+    private static HttpResponse GET(String urlString, String token) {
         // stream to receive the HTTP response
         InputStream inputStream = null;
 
@@ -193,7 +195,7 @@ public class NetworkHelper {
                 // Convert the InputStream into a string
                 String contentAsString = NetworkHelper.readIt(inputStream);
                 /* convert to string */
-                return contentAsString;
+                return new HttpResponse(response, contentAsString);
             }
             return null;
 

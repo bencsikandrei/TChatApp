@@ -51,7 +51,7 @@ public class ChatActivity extends SingleFragmentActivity
         Bundle args = new Bundle();
 
         //updateMessages();
-
+        Log.d("Andrei:ChatActivity", "createFragment: " + mToken);
         args.putString(LoginActivity.EXTRA_TOKEN, mToken);
         args.putString(EXTRA_MESSAGES, mMessages);
 
@@ -148,7 +148,7 @@ public class ChatActivity extends SingleFragmentActivity
                 return "Internet is not available!";
             }
 
-            return NetworkHelper.getMessages(params[0]);
+            return NetworkHelper.getMessages(params[0]).json;
         }
 
         @Override
@@ -178,7 +178,7 @@ public class ChatActivity extends SingleFragmentActivity
                 return "Internet is not available!";
             }
 
-            return NetworkHelper.sendMessage(params[0], params[1]);
+            return NetworkHelper.sendMessage(params[0], params[1]).json;
         }
 
         @Override

@@ -108,5 +108,10 @@
 
         android:text="@string/button_new_account_text"/>
 
+    <ProgressBar
+        android:id="@+id/signin_pg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
 </RelativeLayout>

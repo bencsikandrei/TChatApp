@@ -190,7 +190,7 @@ public class ChatFragment extends Fragment {
                 return "Internet is not available!";
             }
 
-            return NetworkHelper.getMessages(params[0]);
+            return NetworkHelper.getMessages(params[0]).json;
 
         }
 

@@ -57,7 +57,7 @@ public class SubscribeActivity extends SingleFragmentActivity
             if (!NetworkHelper.isInternetAvailable(context)) {
                 return "Internet is not available!";
             }
-            return NetworkHelper.signup(params[0], params[1], params[2]);
+            return NetworkHelper.signup(params[0], params[1], params[2]).json;
         }
 
         @Override
