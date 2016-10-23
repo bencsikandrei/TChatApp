@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,6 +66,27 @@ public class SubscribeFragment extends Fragment {
 
         // password verification
         mEditTextPasswdAgain = (EditText) v.findViewById((R.id.subscribe_edit_text_passwd_again));
+
+        mEditTextPasswdAgain.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (mEditTextLogin.getText().length() < 1 || mEditTextPasswd.getText().toString().length() < 0) {
+                    mNewAccButton.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().length() > 0 && mEditTextPasswd.getText().toString().length() > 0) {
+                    mNewAccButton.setEnabled(true);
+                }
+            }
+        });
 
         mEditTextPasswdAgain.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

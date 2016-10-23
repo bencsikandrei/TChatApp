@@ -161,22 +161,22 @@ public class LoginActivity extends SingleFragmentActivity
         protected void onPostExecute(final HttpResponse resp) {
             super.onPostExecute(resp);
 
+            mDisplayProgress.hideProgressDialog();
+
             if (resp != null && resp.code == HttpURLConnection.HTTP_OK) {
-                mDisplayProgress.hideProgressDialog();
 
                 AccountLab.getInstance().createAccount(uname, passwd);
-
-            } else {
-                Toast.makeText(LoginActivity.this, "Please check credentials and try again!", Toast.LENGTH_SHORT).show();
-            }
-            if (resp != null && resp.code == HttpURLConnection.HTTP_OK) {
 
                 LoggingHelper.logInfo(LoginActivity.this.getClass().getName(), "onPostExecute -> token " + mToken);
 
                 Intent i = ChatActivity.newIntent(LoginActivity.this, mToken);
 
                 startActivity(i);
+
+            } else {
+                Toast.makeText(LoginActivity.this, "Please check credentials and try again!", Toast.LENGTH_SHORT).show();
             }
+
 
         }
 
