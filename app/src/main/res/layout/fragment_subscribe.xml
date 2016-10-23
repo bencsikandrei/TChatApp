@@ -52,7 +52,9 @@
                 android:layout_height="wrap_content"
 
                 android:hint="@string/login_edit"
-                android:nextFocusDown="@+id/subscribe_edit_text_passwd_again"/>
+                android:imeOptions="actionNext"
+                android:maxLines="1"
+                android:nextFocusDown="@+id/subscribe_edit_text_passwd"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -68,7 +70,9 @@
                 android:layout_height="wrap_content"
 
                 android:hint="@string/passwd_edit"
-                android:inputType="textPassword"/>
+                android:imeOptions="actionNext"
+                android:inputType="textPassword"
+                android:maxLines="1"/>
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -85,8 +89,8 @@
                 android:hint="@string/passwd_edit_again"
 
                 android:imeOptions="actionDone"
-
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:maxLines="1"/>
         </android.support.design.widget.TextInputLayout>
 
         <Button

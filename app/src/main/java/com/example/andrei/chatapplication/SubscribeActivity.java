@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.example.andrei.chatapplication.helper.DisplayProgress;
+import com.example.andrei.chatapplication.helper.LoggingHelper;
 import com.example.andrei.chatapplication.helper.SingleFragmentActivity;
 import com.example.andrei.chatapplication.network.NetworkHelper;
 
@@ -36,10 +37,41 @@ public class SubscribeActivity extends SingleFragmentActivity
         return SubscribeFragment.newInstance(args);
     }
 
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        LoggingHelper.logDebug(this.getClass().getName(), "onCreate");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LoggingHelper.logDebug(this.getClass().getName(), "onPause");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LoggingHelper.logDebug(this.getClass().getName(), "onResume");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LoggingHelper.logDebug(this.getClass().getName(), "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LoggingHelper.logDebug(this.getClass().getName(), "onDestroy");
+    }
+
     @Override
     public void onCreateAccClick(String... params) {
         // take the data and make the call
-        // mDisplayProgress.displayProgressDialog();
+        mDisplayProgress.displayProgressDialog("Creating account ..");
         mCreateAccountAsyncTask = new CreateAccountAsyncTask(this);
         mCreateAccountAsyncTask.execute(params);
 
@@ -63,7 +95,7 @@ public class SubscribeActivity extends SingleFragmentActivity
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            // mDisplayProgress.hideProgressDialog();
+            mDisplayProgress.hideProgressDialog();
         }
     }
 }

@@ -15,6 +15,7 @@ public abstract class SingleFragmentActivity extends FragmentActivity {
     // the method to use when creating a fragment
     public abstract Fragment createFragment();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

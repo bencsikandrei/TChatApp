@@ -3,6 +3,7 @@ package com.example.andrei.chatapplication;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.example.andrei.chatapplication.helper.MessagesAdapter;
 import com.example.andrei.chatapplication.message.Message;
@@ -23,6 +23,10 @@ import com.example.andrei.chatapplication.parser.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import static com.example.andrei.chatapplication.LoginActivity.EXTRA_TOKEN;
 
 /**
  * @author Andrei
@@ -37,36 +41,46 @@ import java.util.List;
  */
 
 public class ChatFragment extends Fragment {
+    private final Handler mHandler = new Handler();
     String mToken;
     private String mStringMessages;
     private List<Message> mMsgList = new ArrayList<>();
     private EditText mEditMyMessage;
-    private TextView mTextViewMessages;
-
     private ImageButton mButtonSendMsg;
-    private ImageButton mRefreshButton;
-
     private SwipeRefreshLayout mSwipeContainer;
     private RecyclerView mRecyclerView;
-
-    private MessagesAdapter mMessagesAdapter;
+    /* a timer for refresh -> TODO */
+    private Timer mTimer;
+    private TimerTask mTimerTask;
+    //private MessagesAdapter mMessagesAdapter;
     private LinearLayoutManager mLinearLayoutManager;
 
-
     private OnSendButtonClick mOnSendButtonHandler;
-    private OnRefreshButtonClick mOnRefreshButtonHandler;
 
-    public static Fragment newInstance() {
-        return new ChatFragment();
+
+    public static Fragment newInstance(String token) {
+
+        ChatFragment cf = new ChatFragment();
+
+        Bundle args = new Bundle();
+
+        args.putString(EXTRA_TOKEN, token);
+
+        cf.setArguments(args);
+
+        return cf;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         Bundle args = getArguments();
-        mToken = args.getString(LoginActivity.EXTRA_TOKEN);
-        mStringMessages = updateMessages(mToken);
+
+        mToken = args.getString(EXTRA_TOKEN);
+
+        updateMessages(mToken);
 
     }
 
@@ -81,7 +95,7 @@ public class ChatFragment extends Fragment {
             @Override
             public void onRefresh() {
 
-                mStringMessages = updateMessages(mToken);
+                updateMessages(mToken);
 
             }
         });
@@ -100,7 +114,7 @@ public class ChatFragment extends Fragment {
             public void onClick(View v) {
                 mStringMessages = mOnSendButtonHandler.onSendButtonClick(mEditMyMessage.getText().toString());
                 mEditMyMessage.setText("");
-                mStringMessages = updateMessages(mToken);
+                updateMessages(mToken);
             }
         });
         /* setup the recycler */
@@ -108,10 +122,7 @@ public class ChatFragment extends Fragment {
         /* set layout */
         mLinearLayoutManager = new LinearLayoutManager(getContext());
 
-        /* set adapter */
-        mMessagesAdapter = new MessagesAdapter(mMsgList);
-
-        mRecyclerView.setAdapter(mMessagesAdapter);
+        mRecyclerView.setAdapter(new MessagesAdapter(mMsgList));
 
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
 
@@ -121,6 +132,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
         try {
 
             mOnSendButtonHandler = (OnSendButtonClick) context;
@@ -139,9 +151,8 @@ public class ChatFragment extends Fragment {
         try {
 
             mMsgList.clear();
+
             mMsgList.addAll(JsonParser.getMessages(mStringMessages));
-            /*mMessagesAdapter.swap(mMsgList);
-            mRecyclerView.swapAdapter(mMessagesAdapter, true);*/
 
         } catch (Exception ex) {
             Log.e("Andrei: getMessageList", "getMessageList: parsing went wrong ..");
@@ -149,28 +160,60 @@ public class ChatFragment extends Fragment {
     }
 
     /* call the AsyncTask to fetch messages from server */
-    private String updateMessages(String token) {
+    private void updateMessages(String token) {
 
         try {
-            mStringMessages = new AsyncTaskMessages(getActivity()).execute(token).get();
+            new AsyncTaskMessages(getActivity()).execute(token);
+
             Log.d("Andrei:UpdateMessage", "UpdateMessage:" + mStringMessages);
+
         } catch (Exception ex) {
             Log.e("Andrei:UpdateMessage", "UpdateMessage: error fetching the messages..");
         }
-        return mStringMessages;
+    }
 
+    /*
+    start the timer and make it reload every 10 seconds
+ */
+    private void startTimer() {
+        // initialize timer
+        mTimer = new Timer();
+        // initialize timer task
+        initializeTimerTask();
+        // schedule
+        mTimer.schedule(mTimerTask, 0, 10000);
+    }
+
+    /*
+        stop the timer
+     */
+    private void stopTimer() {
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
+        }
+    }
+
+    /*
+        make it an anonymous class
+     */
+    private void initializeTimerTask() {
+        mTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateMessages(mToken);
+                    }
+                });
+            }
+        };
     }
 
     /* necessary callbacks */
     public interface OnSendButtonClick {
         String onSendButtonClick(String... params);
-    }
-
-    /**
-     * @deprecated No longer used
-     */
-    public interface OnRefreshButtonClick {
-        String onRefreshButtonClick();
     }
 
     /**
@@ -199,11 +242,13 @@ public class ChatFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
+            mStringMessages = s;
+
             getMessageList();
 
             mLinearLayoutManager.scrollToPosition(mMsgList.size() - 1);
 
-            mMessagesAdapter.notifyDataSetChanged();
+            mRecyclerView.getAdapter().notifyDataSetChanged();
 
             if (mSwipeContainer.isRefreshing()) {
                 mSwipeContainer.setRefreshing(false);
