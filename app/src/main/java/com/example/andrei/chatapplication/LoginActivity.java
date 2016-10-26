@@ -1,7 +1,9 @@
 package com.example.andrei.chatapplication;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -170,6 +172,11 @@ public class LoginActivity extends SingleFragmentActivity
                 LoggingHelper.logInfo(LoginActivity.this.getClass().getName(), "onPostExecute -> token " + mToken);
 
                 Intent i = ChatActivity.newIntent(LoginActivity.this, mToken);
+
+                SharedPreferences sharedUserName = getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedUserName.edit();
+
+                //editor.putString()
 
                 startActivity(i);
 
